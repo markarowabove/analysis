@@ -1,3 +1,4 @@
+-- Health Code SQL code
 use healthcode;
 
 truncate constituents;
