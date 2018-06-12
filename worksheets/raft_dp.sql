@@ -13,8 +13,8 @@ select count(*) from dpusermultivalues;
 -- look for complex last names
 select donor_id, first_name, last_name, org_rec, donor_type from dp where first_name is NULL 
 and last_name is not null
-and org_rec = 'N'
-order by donor_type;
+--and org_rec = 'N'
+order by org_rec, donor_type, last_name;
 
 -- get unique donor types
 select distinct donor_type from dp
