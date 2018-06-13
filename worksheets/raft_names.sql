@@ -1,7 +1,10 @@
 use raftdb2den;
 
 select count(*) from names;
-select * from names order by Last;
+select * from names where id = 1958 order by Last;
+
+select * from names where id = 1960;
+update names set Street = '900 S. Broadway' where id = 1960;
 
 -- dup check in names
 select id, count(*) as dupes
@@ -15,20 +18,30 @@ from teachers
 group by nameid
 having (count(*) > 1);
 
-select teacherid, count(*) as dupes
-from teachers
-group by teacherid
+--check for dupes in name org
+select nameid, count(*) as dupes
+from nameorg
+group by nameid
 having (count(*) > 1);
 
--- dump accounts from names
-select id as RaftId, First + ' ' + Last +' Household' as Name, '012f400000192PR' as AccountRecordType from names 
---where Last != ''
-order by Last;
+--select * into names_orig from names;
+-- set created date to last modified
+--   FIELD_INTEGRITY_EXCEPTION:Last Modified Date(Fri Jan 18 00:51:00 GMT 2013) before Create Date(Thu Mar 28 03:03:00 GMT 2013).: Last Modified Date Error fields: LastModifiedDate 
+update names 
+set Timestamp = LastCC
+where Timestamp > LastCC;
 
--- dump contacts from names and teachers
---RaftId,TeacherID,CreatedDate,LastModifiedDate,LastName,FirstName,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,Email,Notes,AccountId
-select a.Id as RaftId
-	, isnull(b.TeacherId,'') as TeacherId
+-- dump accounts from names
+--Raft_db2_Id__c,Name,RecordTypeId
+select a.id as RaftId, a.First + ' ' + a.Last +' Household' as Name, '012f400000192PR' as AccountRecordType 
+from names a
+where 1 = 1
+order by a.id;
+
+-- dump non-org contacts from names and teachers
+--Raft_db2_Id__c,Raft_Db2_Teacher_Id__c,CreatedDate,LastModifiedDate,LastName,FirstName,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,Email,Notes,AccountId
+select a.Id as Raft_db2_Id
+	, isnull(b.TeacherId,'') as Raft_Db2_Teacher_Id__c
 	, isnull(convert(nvarchar,a.Timestamp,126),'') as CreatedDate
 	, isnull(convert(nvarchar,a.LastCC,126),'') as LastModifiedDate
 	, isnull(a.Last,'') as Last
@@ -43,7 +56,7 @@ select a.Id as RaftId
 from names a
 left join teachers b on a.id = b.nameid
 where 1 = 1
---	and a.Id in ('17336','8604' ,'22713' ,'8652' ,'12441' ,'11743' ,'10600' ,'3989')
-order by a.Last;
+--	and a.Id in ('1810','3946','17149','20617','24540')
+order by a.Id;
 
 
