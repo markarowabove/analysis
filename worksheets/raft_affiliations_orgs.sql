@@ -25,15 +25,14 @@ where a.orgid in ('1','2','3')
 order by a.Raft_Db2_Compound_Id;
 
 -- dump org affiliations
--- npe5__Organization__r_RaftDb2Id__c,npe5__Contact__r_RaftDb2Id__c,npe5__Role__c,npe5__Primary__c,Raft_Db2_Compound_Id__c
-select a.OrgId as RaftDb2Id_Organization__c
-	, a.NameId as RaftDb2Id_Contact__c
+-- npe5__Organization__r_Raft_Db2_Id__c,npe5__Contact__r_Raft_Db2_Id__c,npe5__Role__c,npe5__Primary__c,Raft_Db2_Compound_Id__c
+select a.OrgId as Raft_Db2_Id_Organization__c
+	, a.NameId as Raft_Db2_Id_Contact__c
 	, b.NameOrgType as npe5__Role__c
 	, 1 as npe5__Primary__c
 	, a.Raft_Db2_Compound_Id as Raft_Db2_Compound_Id__c 
 from NameOrg a
 left join LookupNameOrgType b on a.type = b.NameOrgTypeID
---where a.orgid in ('1','2','3')
 order by a.Raft_Db2_Compound_Id;
 
 

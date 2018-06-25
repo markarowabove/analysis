@@ -21,6 +21,8 @@ select * from lookupSchType order by Text;
 
 update lookupSchType set Text = 'Unknown' where Text = 'unknown';
 
+select * from schoolorgs where orgID = 74;
+
 --dump org data for account import
 -- Raft_Db2_Organization_Id__c,Name,CreatedDate,IsArchived__c,Type,SchoolType__c,CDSCode__c,BillingStreet,BillingCity,BillingState,BillingPostalCode,Phone,RecordTypeId
 select a.id as RaftId
@@ -42,6 +44,5 @@ left join schoolorgs c on a.Id = c.OrgID
 left join lookupSchType d on c.Type = d.TypeId
 left join OrgAddresses e on a.Id = e.OrgId AND e.IsPrimary=1
 left join OrgPhones f on a.Id = f.OrgID AND f.Type=8
-LEFT JOIN lookupPhonetype g on f.Type = g.PhoneTypeId
---where b.Description = 'School'
+left join lookupPhonetype g on f.Type = g.PhoneTypeId
 order by a.id;

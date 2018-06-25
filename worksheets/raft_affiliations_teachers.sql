@@ -14,17 +14,33 @@ from teachers
 group by teacherid
 having (count(*) > 1);
 
+-- test queries
+select c.OrgId as RaftDb2Id_Organization__c
+	, a.NameId as RaftDb2Id_Contact__c
+	, d.First
+	, d.Last
+	, b.Text as npe5__Role__c
+	, 1 as npe5__Primary__c
+	, a.Raft_Db2_Compound_Id as Raft_Db2_Compound_Id__c
+from teachers a
+left join LookupTeacherType b on a.TeacherType = b.TTypeID
+left join schoolorgs c on a.schoolID = c.SchoolID
+left join names d on a.NameId = d.ID
+where a.NameID = 12797
+order by a.SchoolId;
+
 -- dump teacher affiliations
 -- npe5__Organization__r_RaftDb2Id__c,npe5__Contact__r_RaftDb2Id__c,npe5__Role__c,npe5__Primary__c,Raft_Db2_Compound_Id__c
-select a.SchoolId as RaftDb2Id_Organization__c
+select c.OrgId as RaftDb2Id_Organization__c
 	, a.NameId as RaftDb2Id_Contact__c
 	, b.Text as npe5__Role__c
 	, 1 as npe5__Primary__c
-	, a.Raft_Db2_Compound_Id as Raft_Db2_Compound_Id__c 
+	, a.Raft_Db2_Compound_Id as Raft_Db2_Compound_Id__c
 from teachers a
 left join LookupTeacherType b on a.TeacherType = b.TTypeID
-where a.schoolid in ('85','102','130')
+left join schoolorgs c on a.schoolID = c.SchoolID
 order by a.SchoolId;
+
 
 
 

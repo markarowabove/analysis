@@ -35,7 +35,6 @@ where Timestamp > LastCC;
 --Raft_db2_Id__c,Name,RecordTypeId
 select a.id as RaftId, a.First + ' ' + a.Last +' Household' as Name, '012f400000192PR' as AccountRecordType 
 from names a
-where 1 = 1
 order by a.id;
 
 -- dump non-org contacts from names and teachers
