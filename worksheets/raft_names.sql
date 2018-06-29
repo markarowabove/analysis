@@ -38,8 +38,8 @@ from names a
 order by a.id;
 
 -- dump non-org contacts from names and teachers
---Raft_db2_Id__c,Raft_Db2_Teacher_Id__c,CreatedDate,LastModifiedDate,LastName,FirstName,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,Email,Notes,AccountId
-select a.Id as Raft_db2_Id
+--Raft_Db2_Id__c,Raft_Db2_Teacher_Id__c,CreatedDate,LastModifiedDate,LastName,FirstName,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,Email,Notes,AccountId
+select a.Id as Raft_Db2_Id__c
 	, isnull(b.TeacherId,'') as Raft_Db2_Teacher_Id__c
 	, isnull(convert(nvarchar,a.Timestamp,126),'') as CreatedDate
 	, isnull(convert(nvarchar,a.LastCC,126),'') as LastModifiedDate

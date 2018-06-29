@@ -45,4 +45,4 @@ left join lookupSchType d on c.Type = d.TypeId
 left join OrgAddresses e on a.Id = e.OrgId AND e.IsPrimary=1
 left join OrgPhones f on a.Id = f.OrgID AND f.Type=8
 left join lookupPhonetype g on f.Type = g.PhoneTypeId
-order by a.id;
+order by a.ID;

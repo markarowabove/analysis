@@ -19,12 +19,16 @@ select distinct description from terms order by description;
 -- and description like 'November%';
 -- and description = 'Summer 2009'
 -- and description = 'Symposium III';
---and termid = 54;
+-- and termid = 54;
+
+select * from workshops where UpperGradeRange > 12;
+select title, left(title,80) from workshops where id = 353;
+update workshops set title = 'Dem Bones, Dem Bones, Dem Dry Bones are Simple Machines? with Chris DeKay' where id = 353;
 
 -- dump test load workshops
 -- Raft_Db2_Id__c,Name,StartDate,Sponsor_Name__c,Member_Cost__c,Non_Member_Cost__c,Description,Lower_Grade_Range__c,Upper_Grade_Range__c,Capacity__c,EndDate,Cost_Text__c,Audience__c,Published__c,Status,Type,Category__c,RecordTypeId,IsActive
 select top 20 a.Id as Raft_Db2_Id__c
-	, a.title as Name
+	, left(a.title,80) as Name
 	, isnull(convert(nvarchar,a.Time,126),'') as StartDate
 	, isnull(a.Sponsor,'') as Sponsor_Name__c
 	, a.MemberCost as Member_Cost__c
@@ -54,12 +58,13 @@ select top 20 a.Id as Raft_Db2_Id__c
 from workshops a
 left join LookupWorkshopTypes b on a.CourseType = b.WSTypeID
 left join Terms c on a.term = c.TermID
+where a.Title not like 'CANCELLED:%'
 order by a.Id;
 
 -- dump workshops
 -- Raft_Db2_Id__c,Name,StartDate,Sponsor_Name__c,Member_Cost__c,Non_Member_Cost__c,Description,Lower_Grade_Range__c,Upper_Grade_Range__c,Capacity__c,EndDate,Cost_Text__c,Audience__c,Published__c,Status,Type,Category__c,RecordTypeId,IsActive
 select a.Id as Raft_Db2_Id__c
-	, a.title as Name
+	, left(a.title,80) as Name
 	, isnull(convert(nvarchar,a.Time,126),'') as StartDate
 	, isnull(a.Sponsor,'') as Sponsor_Name__c
 	, a.MemberCost as Member_Cost__c
@@ -89,4 +94,5 @@ select a.Id as Raft_Db2_Id__c
 from workshops a
 left join LookupWorkshopTypes b on a.CourseType = b.WSTypeID
 left join Terms c on a.term = c.TermID
+where a.Title not like 'CANCELLED:%'
 order by a.Id;
