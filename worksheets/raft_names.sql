@@ -12,6 +12,15 @@ from names
 group by id
 having (count(*) > 1);
 
+-- dup check in names
+select email, count(*) as dupes
+from names
+group by email
+having (count(*) > 1)
+order by dupes desc;
+
+select * from names where email = 'pauline.walls@spectracenter.org' order by Last;
+
 -- dup check in teachers
 select nameid, count(*) as dupes
 from teachers
@@ -23,6 +32,8 @@ select nameid, count(*) as dupes
 from nameorg
 group by nameid
 having (count(*) > 1);
+
+select * from names where id = 616;
 
 --select * into names_orig from names;
 -- set created date to last modified
@@ -57,5 +68,3 @@ left join teachers b on a.id = b.nameid
 where 1 = 1
 --	and a.Id in ('1810','3946','17149','20617','24540')
 order by a.Id;
-
-

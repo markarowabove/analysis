@@ -5,6 +5,8 @@ use dp;
 alter table dpgift alter column gift_date datetime2 not null;
 alter table dpgift alter column gift_id int not null;
 alter table dpgift alter column donor_id int not null;
+alter table dpgift alter column amount float;
+alter table dpgiftudf alter column transactionamount float;
 select * from dpgift order by gift_id desc;
 
 -- test queries
@@ -37,7 +39,7 @@ group by campaign,record_type,donor_id
 order by campaign;
 
 
-select * from dpgift where donor_id = 603;
+select * from dpgift where record_type in ('P','G') and donor_id = 9 order by gift_date;
 
 
 -- dump gifts that are posted
@@ -88,5 +90,7 @@ left join dp c on a.donor_id = c.donor_id
 where a.record_type = 'P'
 	and a.campaign != ''
 order by a.donor_id;
+
+
 
 

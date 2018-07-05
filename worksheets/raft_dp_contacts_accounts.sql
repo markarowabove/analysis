@@ -1,6 +1,10 @@
 -- dp contacts and accounts
 use dp;
 
+-- update queries
+alter table dp alter column donor_id int not null;
+
+
 select count(*) from dp;
 select count(*) from dpaddress;
 select count(*) from dpcodes where code IS NOT NULL;
@@ -10,7 +14,18 @@ select count(*) from dplink;
 select count(*) from dpudf;
 select count(*) from dpusermultivalues;
 
-select * from dp where donor_id = 1145;
+select a.address, a.address2, a.city, a.state, a.zip, a.address_type
+from dp a 
+where a.donor_id = 1068;
+
+select distinct address_type from dpaddress order by address_type;
+select distinct address_type from dp order by address_type;
+
+select a.address, a.address2, a.city, a.state, a.zip, a.address_type
+from dpaddress a 
+where a.donor_id = 1068;
+
+select * from dp order by donor_id;
 
 /********* dp ****************/
 -- dump dp for contacts
