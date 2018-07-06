@@ -2,6 +2,9 @@
 use cc;
 
 -- update tables
+alter table contacts drop constraint pk_contacts;
+alter table contacts drop id_str;
+alter table contacts alter column id int not null;
 alter table contacts add constraint pk_contacts primary key(id);
 alter table contacts alter column createdat datetime2 not null;
 alter table contacts alter column updatedat datetime2 not null;
@@ -9,7 +12,85 @@ alter table contacts alter column updatedat datetime2 not null;
 select count(*) from contacts;
 
 delete from contacts where id = 437; -- remove bad record
-select * from contacts where CreatedAt = '1900-01-01 00:00:00.0000000';
+select * from contacts where email = 'bethany.grosser@gmail.com';
+
+-- research queries
+select email, count(*) as dupes
+from contacts
+group by email
+having (count(*) > 1);
+
+-- 5879 - match: email, first, last
+select a.ID
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where a.FirstName = b.First
+	and a.Lastname = b.Last
+order by a.ID;
+
+-- 5938 - match: email, last
+select a.ID
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where 1 = 1
+--	and a.FirstName = b.First
+	and a.Lastname = b.Last
+order by a.ID;
+
+-- 5934 - match: email, first
+select a.ID
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where 1 = 1
+	and a.FirstName = b.First
+--	and a.Lastname = b.Last
+order by a.ID;
+
+-- 5993 - match email, first or last
+select a.ID
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where 1 = 1
+	and a.FirstName = b.First
+	or a.Lastname = b.Last
+order by a.ID;
+
+-- 6086 - match email
+select a.ID
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where 1 = 1
+--	and a.FirstName = b.First
+--	or a.Lastname = b.Last
+order by a.ID;
+
+if (object_id('tempdb..#db2ids') is not null) begin drop table #db2ids end;
+select a.ID as id into #db2ids
+from contacts a 
+inner join raftdb2den.dbo.names b on a.Email = b.Email
+where 1 = 1
+	and a.FirstName = b.First
+	and a.Lastname = b.Last
+order by b.ID;
+
+if (object_id('tempdb..#notdb2ids') is not null) begin drop table #notdb2ids end;
+select a.ID as id into #notdb2ids
+from contacts a 
+left join raftdb2den.dbo.names b on a.Email = b.Email
+where b.Email is null
+order by a.id; 
+
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select id into #ids from (
+	select id from #db2ids
+	union 
+	select id from #notdb2ids
+) a;
+
+-- mystery 125 contacts
+select id, email from contacts where id in (
+	select a.id from contacts a left join #ids b on a.id = b.id where b.id is null
+) order by id;
 
 
 -- assign to newsletter group - set Contact.Member_Newsletter__c to true
@@ -25,7 +106,8 @@ select b.ID as Raft_Db2_Id__c
 --	, '0' as Member_Newsletter__c
 from contacts a 
 inner join raftdb2den.dbo.names b on a.Email = b.Email
-where a.FirstName = b.First
+where 1 = 1
+	and a.FirstName = b.First
 	and a.Lastname = b.Last
 order by b.ID;
 
@@ -69,5 +151,6 @@ from contacts a
 left join raftdb2den.dbo.names b on a.Email = b.Email
 where b.Email is null
 order by b.ID; 
+
 
 
