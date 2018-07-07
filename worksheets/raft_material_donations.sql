@@ -51,8 +51,8 @@ where a.NameID is null and a.OrgId is not null
 order by a.DonationID;
 
 -- dump contact donations
--- Db2Id__c,Raft_Contact_Db2_Id__c,Donation_Date__c,Description__c,Volume__c,Acknowledgement_Email__c
-select top 25 a.DonationID as Db2Id__c
+-- Raft_Db2_Id__c,Raft_Contact_Db2_Id__c,Donation_Date__c,Description__c,Volume__c,Acknowledgement_Email__c
+select a.DonationID as Raft_Db2_Id__c
 	, isnull(a.NameId,'0') as Raft_Contact_Db2_Id__c
 	, isnull(convert(nvarchar,a.DonationDate,126),'') as Donation_Date__c
 	, isnull(a.Description,'') as Description__c
@@ -64,8 +64,8 @@ where a.NameID is not null
 order by a.DonationID;
 
 -- dump org donations
--- Db2Id__c,Raft_Organization_Db2_Id__c,Donation_Date__c,Description__c,Volume__c,Acknowledgement_Email__c
-select top 25 a.DonationID as Db2Id__c
+-- Raft_Db2_Id__c,Raft_Organization_Db2_Id__c,Donation_Date__c,Description__c,Volume__c,Acknowledgement_Email__c
+select a.DonationID as Raft_Db2_Id__c
 	, isnull(a.OrgId,'0') as Raft_Organization_Db2_Id__c
 	, isnull(convert(nvarchar,a.DonationDate,126),'') as Donation_Date__c
 	, isnull(a.Description,'') as Description__c
