@@ -75,11 +75,11 @@ begin
 	while (@i < @gradecount)
 	begin
 		select @gradelabel = label from #gradelabels where val = @gradefrom + @i;
-		set @gradestr = @gradestr + rtrim(@gradelabel) + ';';
-		--print '@i : ' + rtrim(cast(@i as nvarchar(10))) + ' @gradcount: ' + rtrim(cast(@gradecount as nvarchar(10))) + ' Grade Str: ' + rtrim(cast(@gradestr as nvarchar(10)));
+		set @gradestr = @gradestr + @gradelabel + ';';
+		--print '@i : ' + rtrim(cast(@i as nvarchar(10))) + ' @gradelabel: ' + @gradelabel + ' @gradcount: ' + rtrim(cast(@gradecount as nvarchar(10))) + ' Grade Str: ' + rtrim(cast(@gradestr as nvarchar(100)));
 		set @i = @i + 1;
 	end;
-	print @compoundid + ',' + rtrim(cast(@gradestr as nvarchar(10)));
+	print @compoundid + ',' + rtrim(cast(@gradestr as nvarchar(100)));
 	fetch next from teachers_cursor into @gradefromstr, @gradetostr, @compoundid;
 end;
 
