@@ -1,4 +1,4 @@
---this creates a usable RFM data set in a CSV format
+--this creates a CSV file for teacher grades
 use raftdb2den;
 
 set nocount on;
