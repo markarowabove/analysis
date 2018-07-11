@@ -1,8 +1,6 @@
 -- material donations
 use raftdb2den;
 
-select * into MaterialDonation_orig from MaterialDonation;
-
 -- data modification queries
 --update MaterialDonation set TYEmail = 'noemail@raft.com' where TYEmail = 'noemail@raft';
 --select * from MaterialDonation where TYEmail != '' and TYEmail not like '%_@__%.__%';
@@ -11,6 +9,8 @@ select * into MaterialDonation_orig from MaterialDonation;
 --update MaterialDonation set TYEmail = 'noemail@raft.com'  where TYEmail = 'noemail@raft.net';
 
 -- test queries
+select * from materialdonation where description = 'Foamcore';
+
 -- get contacts id
 select top 25 a.DonationID
 from MaterialDonation a 
