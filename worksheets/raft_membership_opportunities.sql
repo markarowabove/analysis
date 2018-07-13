@@ -6,7 +6,7 @@ select membershipid,payment,timestamp from membership order by payment;
 
 -- Raft_Db2_Id__c,CloseDate,Amount,npsp_Primary_Contact_r_Raft_Db2_Id__c,Raft_Account_Db2_Id__c,Name,RecordTypeId,StageName
 select a.membershipID as Raft_Db2_Id__c 
-	, convert(nvarchar,a.Timestamp,126) as CloseDate
+	, convert(nvarchar,a.StartDate,126) as CloseDate
 	, a.Payment as Amount
 	, c.ID as npsp_Primary_Contact_r_Raft_Db2_Id__c
 	, c.ID as Raft_Account_Db2_Id__c

@@ -26,7 +26,22 @@ create table #subjectlabels (
 	, id varchar(50)
 )
 insert into #subjectlabels (label,id) 
-	select f.Subject as label
+	select 
+		case
+			when f.Subject = 'Art/Music/Drama' then 'Art/Music/Theater'
+			when f.Subject = 'Career Ed/ Life Skills' then 'Other'
+			when f.Subject = 'Vocational' then 'Other'
+			when f.Subject = 'Core Elementary' then 'Core Elementary'
+			when f.Subject = 'Early Education' then 'ECE'
+			when f.Subject = 'English/Language Arts' then 'Humanities'
+			when f.Subject = 'Foreign Language' then 'Humanities'
+			when f.Subject = 'History/Social Studies' then 'Humanities'
+			when f.Subject = 'Math' then 'STEM'
+			when f.Subject = 'Other' then 'Other'
+			when f.Subject = 'Sciences' then 'STEM'
+			when f.Subject = 'Technology' then 'STEM'
+			when f.Subject = 'Vocational' then 'Other'
+		end as label
 		, a.Raft_Db2_Compound_Id as id
 	from teachers a
 	inner join #application b on a.NameID = b.NameID
@@ -39,7 +54,7 @@ insert into #subjectlabels (label,id)
 set nocount off;
 
 declare subjects_cursor cursor for
-select distinct top 100 a.Raft_Db2_Compound_Id
+select distinct a.Raft_Db2_Compound_Id
 from teachers a
 inner join #application b on a.NameID = b.NameID
 left join ApplicationSubject e on b.ApplicationKey = e.ApplicationKey
@@ -55,7 +70,7 @@ while @@FETCH_STATUS = 0
 begin
 	--print 'Compound ID: ' + @compoundid;
 	set @subjectlabel = '';
-	select @subjectlabel = coalesce(@subjectlabel,'') + label + ';' from #subjectlabels where id = @compoundid;
+	select @subjectlabel = coalesce(@subjectlabel,'') + label + ';' from (select distinct label from #subjectlabels where id = @compoundid) a;
 	--print '@subjectlabel: ' + @subjectlabel;
 		
 	print @compoundid + ',' + @subjectlabel;
