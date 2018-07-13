@@ -30,8 +30,9 @@ where a.NameID = 12797
 order by a.SchoolId;
 
 -- dump teacher affiliations
--- npe5__Organization__r_RaftDb2Id__c,npe5__Contact__r_RaftDb2Id__c,npe5__Role__c,npe5__Primary__c,Raft_Db2_Compound_Id__c
-select c.OrgId as RaftDb2Id_Organization__c
+-- Raft_Db2_Teacher_Id__c,npe5__Organization__r_RaftDb2Id__c,npe5__Contact__r_RaftDb2Id__c,npe5__Role__c,npe5__Primary__c,Raft_Db2_Compound_Id__c
+select a.TeacherID as Raft_Db2_Teacher_Id__c
+	, c.OrgId as RaftDb2Id_Organization__c
 	, a.NameId as RaftDb2Id_Contact__c
 	, b.Text as npe5__Role__c
 	, 1 as npe5__Primary__c

@@ -92,5 +92,3 @@ where a.record_type = 'P'
 order by a.donor_id;
 
 
-
-
