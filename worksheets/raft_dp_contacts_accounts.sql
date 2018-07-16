@@ -27,9 +27,16 @@ where a.donor_id = 1068;
 
 select * from dp order by donor_id;
 
+-- update created date
+-- Donor_Perfect_Id__c,Donor_Perfect_Created_Date__c
+select a.donor_id as Donor_Perfect_Id__c
+	, isnull(convert(varchar(10),cast(a.created_date as datetime),101),'') as CreatedDate
+from dp a 
+order by a.donor_id;
+
 /********* dp ****************/
 -- dump dp for contacts
--- Donor_Perfect_Id__c,FirstName,LastName,Suffix,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,npe01__Primary_Address_Type__c,Phone,npe01__WorkPhone__c,Fax,MobilePhone,npe01__HomeEmail__c
+-- Donor_Perfect_Id__c,FirstName,LastName,Suffix,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,npe01__Primary_Address_Type__c,Phone,npe01__WorkPhone__c,Fax,MobilePhone,npe01__HomeEmail__c,CreatedDate
 select a.donor_id as Donor_Perfect_Id__c
 	, isnull(a.first_name,'') as FirstName
 	, isnull(a.last_name,'') as LastName
@@ -54,6 +61,7 @@ select a.donor_id as Donor_Perfect_Id__c
 	, isnull(a.fax_phone,'') as Fax
 	, isnull(a.mobile_phone,'') as MobilePhone
 	, isnull(a.email,'') as npe01__HomeEmail__c
+	, isnull(convert(nvarchar,a.created_date,126),'') as CreatedDate
 from dp a 
 order by a.donor_id;
 
@@ -75,5 +83,3 @@ select a.donor_id as Donor_Perfect_Id__c
 from dp a 
 left join dpudf b on a.donor_id = b.donor_id
 order by a.donor_type;
-
-
