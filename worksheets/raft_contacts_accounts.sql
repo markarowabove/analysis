@@ -62,7 +62,7 @@ select a.Id as Raft_Db2_Id__c
 	, isnull(upper(a.State),'') as State
 	, isnull(a.Zip,'') as Zip
 	, isnull(a.Email,'') as Email
-	, isnull(b.Notes,'') as Notes 
+--	, isnull(b.Notes,'') as Notes 
 from names a
 left join teachers b on a.id = b.nameid
 where 1 = 1
