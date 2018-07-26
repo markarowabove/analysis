@@ -1,6 +1,12 @@
 -- workshop enrollments
 use raftdb2den;
 
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.Id as Id into #ids from WorkshopEnrollment a
+left join raftdb2den_old.dbo.WorkshopEnrollment b on a.Id = b.Id
+where b.Id is null;
+--select * from #ids order by id;
+
 select * from WorkshopEnrollment order by id;
 
 -- dump workshop enrollments
@@ -18,8 +24,10 @@ select a.Id as Enrollment_Id__c
 	, 'Posted' as StageName
 	, concat(b.First,' ',b.Last,' Purchase ',convert(nvarchar,a.EnrollmentDate,110)) as Name
 	, '012f4000000iG6mAAE' as RecordTypeId
+	, 'DB2 Import 20180725' as Import_Tag__c
 from WorkshopEnrollment a
 left join names b on a.NameID = b.ID
+inner join #ids c on a.Id = c.Id
 --left join sf.dbo.contacts c on a.nameid = c.Raft_Db2_Id
 order by a.nameid;
 

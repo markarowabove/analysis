@@ -2,11 +2,19 @@
 use raftdb2den;
 
 -- data modification queries
---update MaterialDonation set TYEmail = 'noemail@raft.com' where TYEmail = 'noemail@raft';
---select * from MaterialDonation where TYEmail != '' and TYEmail not like '%_@__%.__%';
---update MaterialDonation set TYEmail = 'noemail@raft.com'  where TYEmail != '' and TYEmail not like '%_@__%.__%';
---select * from MaterialDonation where TYEmail = 'noemail@raft.net';
---update MaterialDonation set TYEmail = 'noemail@raft.com'  where TYEmail = 'noemail@raft.net';
+update MaterialDonation set TYEmail = 'noemail@raft.com' where TYEmail = 'noemail@raft';
+select * from MaterialDonation where TYEmail != '' and TYEmail not like '%_@__%.__%';
+update MaterialDonation set TYEmail = 'noemail@raft.com'  where TYEmail != '' and TYEmail not like '%_@__%.__%';
+select * from MaterialDonation where TYEmail = 'noemail@raft.net';
+update MaterialDonation set TYEmail = 'noemail@raft.com'  where TYEmail = 'noemail@raft.net';
+update MaterialDonation set TYEmail = ''  where TYEmail = 'noemail@raft.com';
+
+-- diff - additional records
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.donationId as Id into #ids from MaterialDonation a
+left join raftdb2den_old.dbo.MaterialDonation b on a.donationId = b.donationId
+where b.donationId is null;
+--select * from #ids order by id;
 
 -- test queries
 select * from materialdonation where description = 'Foamcore';
@@ -58,7 +66,9 @@ select a.DonationID as Raft_Db2_Id__c
 	, isnull(a.Description,'') as Description__c
 	, isnull(a.Volume,'0.0') as Volume__c
 	, isnull(a.TYEmail,'') as Acknowledgement_Email__c
+	, 'DB2 Import 20180725' as Import_Tag__c
 from MaterialDonation a 
+inner join #ids b on a.donationId = b.Id
 where a.NameID is not null 
   and a.OrgId is null
 order by a.DonationID;
@@ -71,6 +81,8 @@ select a.DonationID as Raft_Db2_Id__c
 	, isnull(a.Description,'') as Description__c
 	, isnull(a.Volume,'0.0') as Volume__c
 	, isnull(a.TYEmail,'') as Acknowledgement_Email__c
+	, 'DB2 Import 20180725' as Import_Tag__c
 from MaterialDonation a 
+inner join #ids b on a.donationId = b.Id
 where a.OrgId is not null
 order by a.DonationID;

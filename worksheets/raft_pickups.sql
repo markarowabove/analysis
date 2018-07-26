@@ -1,7 +1,12 @@
 -- material donation pickups
 use raftdb2den;
 
---update queries
+-- diff - additional records
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.PickupId as Id into #ids from Pickup a
+left join raftdb2den_old.dbo.Pickup b on a.PickupId = b.PickupId
+where b.PickupId is null;
+--select * from #ids order by id;
 
 -- test queries
 select count(*) from pickup;

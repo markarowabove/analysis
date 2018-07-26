@@ -10,11 +10,11 @@ alter table dpgift alter column glink int not null;
 alter table dpgift alter column amount float;
 alter table dpgiftudf alter column transactionamount float;
 
-select a.* from dpgift a
+-- diff - additional records
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.gift_id into #ids from dpgift a
 left join dp_old.dbo.dpgift b on a.gift_id = b.gift_id
 where b.gift_id is null;
-
-select * from dp where donor_id = 11;
 
 -- report total amount of gift types
 select 
