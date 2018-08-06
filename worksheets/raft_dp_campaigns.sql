@@ -13,11 +13,23 @@ left join dpidscampaigns b on a.gift_id = b.id
 --where a.gift_id = 4
 order by a.campaign;
 
+select campaign, count(*)
+from dpgift
+where campaign != ''
+group by campaign
+order by campaign;
+
 if (object_id('tempdb..#campaigns') is not null) begin drop table #campaigns end;
 select distinct a.campaign as id into #campaigns
 from dpgift a 
 where a.campaign != ''
 order by a.campaign;
+
+-- diff - additional records
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.id into #ids from #campaigns a
+left join dp_old.dbo.dpcampaigns b on a.id = b.Donor_Perfect_Id__c
+where b.Donor_Perfect_Id__c is null;
 
 --select * from #campaigns order by id;
 

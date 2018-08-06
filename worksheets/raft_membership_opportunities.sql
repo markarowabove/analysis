@@ -11,10 +11,11 @@ where b.membershipID is null;
 
 -- test queries
 select membershipid,payment,timestamp from membership order by payment;
+select * from membership where membershipId = 24851;
 
 -- Raft_Db2_Id__c,CloseDate,Amount,npsp_Primary_Contact_r_Raft_Db2_Id__c,Raft_Account_Db2_Id__c,Name,RecordTypeId,StageName
 select a.membershipID as Raft_Db2_Id__c 
-	, convert(nvarchar,a.StartDate,126) as CloseDate
+	, convert(nvarchar,a.Timestamp,126) as CloseDate
 	, a.Payment as Amount
 	, c.ID as npsp_Primary_Contact_r_Raft_Db2_Id__c
 	, c.ID as Raft_Account_Db2_Id__c
@@ -26,4 +27,8 @@ from membership a
 left join teachers b on a.TeacherID = b.TeacherID
 left join names c on b.nameID = c.ID
 inner join #ids d on a.membershipId = d.Id
-order by a.MembershipID;
+where 1 = 1
+	and a.MemberType = 1
+--	and left(a.Timestamp,10) !=  left(a.StartDate,10)
+order by a.StartDate;
+

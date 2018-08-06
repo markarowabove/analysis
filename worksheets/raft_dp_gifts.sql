@@ -12,9 +12,10 @@ alter table dpgiftudf alter column transactionamount float;
 
 -- diff - additional records
 if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
-select a.gift_id into #ids from dpgift a
+select a.gift_id as Id into #ids from dpgift a
 left join dp_old.dbo.dpgift b on a.gift_id = b.gift_id
 where b.gift_id is null;
+--select * from #ids order by id;
 
 -- report total amount of gift types
 select 
@@ -26,12 +27,15 @@ select
 		when record_type = 'S' then 'Soft Credit'
 	end as record_type
 	, count (*) as count
-from dpgift
+from dpgift a
+inner join #ids b on a.gift_id = b.id
 group by record_type
 order by record_type;
 
+select * from dpgift where gift_id in (124,125);
+
 -- test queries
-select top 100 a.gift_id as Donor_Perfect_Id__c
+select a.gift_id as Donor_Perfect_Id__c
 	, a.donor_id as Donor_Perfect_Contact_Id__c
 	, a.donor_id as Donor_Perfect_Account_Id__c
 	, case
@@ -51,11 +55,61 @@ left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
 left join dp c on a.donor_id = c.donor_id
 where 1 = 1
 	--and a.record_type = 'M'
-	and a.campaign = 'ANNUA1'
+	--and a.campaign = 'ANNUA1'
 --	and a.record_type in ('P','G')
---	and a.campaign = 'UPCYC17'
+	and a.campaign = 'UPCYC18'
 --	and a.donor_id = 9
 order by a.record_type;
+
+select a.solicit_code, sum(a.amount) as amount
+from dpgift a 
+where 1 = 1
+	and a.campaign = 'UPCYC18'
+group by a.solicit_code
+order by a.solicit_code;
+
+select a.solicit_code, count(*) as count
+from dpgift a 
+where 1 = 1
+	and a.campaign = 'UPCYC18'
+group by a.solicit_code
+order by a.solicit_code;
+
+select a.campaign, count(*) as count
+from dpgift a 
+where 1 = 1
+	and a.record_type in ('G','M')
+group by a.campaign
+order by count(*)desc;
+
+select a.campaign, format(sum(a.amount),'C','en-us') as TotalSum
+from dpgift a 
+where 1 = 1
+	and a.record_type in ('G','M')
+group by a.campaign
+order by count(*)desc;
+
+select a.campaign, count(*) as count, format(sum(a.amount),'C','en-us') as TotalSum
+from dpgift a 
+where 1 = 1
+	and a.record_type in ('G','M')
+group by a.campaign
+order by count(*)desc;
+
+select a.*
+from dpgift a 
+inner join #ids b on a.gift_id = b.id
+where 1 = 1
+	and a.campaign = 'UPCYC18'
+	and a.record_type in ('G')
+order by a.record_type;
+
+select sum(a.amount) 
+from dpgift a 
+where 1 = 1
+	and a.campaign = 'UPCYC18'
+	and a.record_type in ('G')
+;
 
 select campaign,record_type,donor_id, count(*) as count
 from dpgift
@@ -86,6 +140,21 @@ order by a.donor_id, a.gift_id;
 select * from dpcampaigns;
 
 select a.gift_id as Donor_Perfect_Id__c
+	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
+	, isnull(a.solicit_code,'') as Raft_Donor_Perfect_Solicitation_Code__c
+from dpgift a
+left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
+left join dp c on a.donor_id = c.donor_id
+--where a.record_type = 'G'
+where 1 = 1
+	and a.record_type in ('G','M')
+	and a.campaign != ''
+--	and a.campaign = 'UPCYC18'
+--	and a.donor_id = 402
+order by a.solicit_code;
+
+
+select a.gift_id as Donor_Perfect_Id__c
 	, a.donor_id as Donor_Perfect_Contact_Id__c
 	, a.donor_id as Donor_Perfect_Account_Id__c
 	, case
@@ -105,9 +174,10 @@ left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
 left join dp c on a.donor_id = c.donor_id
 --where a.record_type = 'G'
 where 1 = 1
---	and a.record_type = 'G'
+	and a.record_type = 'G'
 --	and a.campaign != ''
-	and a.donor_id = 402
+	and a.campaign = 'UPCYC18'
+--	and a.donor_id = 402
 order by a.amount desc;
 
 -- get all solication codes
@@ -117,32 +187,34 @@ from dpgift a
 where a.solicit_code != ''
 order by a.gift_id;
 
-
 -- dump gifts that are posted
 -- Donor_Perfect_Id__c,Donor_Perfect_Contact_Id__c,Donor_Perfect_Account_Id__c,StageName,CloseDate,Amount,Donor_Perfect_Campaign_Id__c,Description,Name
-select top 1 a.gift_id as Donor_Perfect_Id__c
+select a.gift_id as Donor_Perfect_Id__c
 	, a.donor_id as Donor_Perfect_Contact_Id__c
 	, a.donor_id as Donor_Perfect_Account_Id__c
 	, case
 		when a.record_type = 'G' then 'Posted'
+		when a.record_type = 'M' then 'Posted'
 		when a.record_type = 'P' then 'Pledged'
 	  end as StageName
 	, isnull(convert(nvarchar,a.gift_date,110),'') as CloseDate
 	, a.amount as Amount
-	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
+	, isnull(a.campaign,'') as Donor_Perfect_Campaign_Id__c
+--	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
 	, isnull(a.gift_narrative,'') as Description
 	, case
 		when c.donor_type in ('IN','INDIV3') or c.donor_type = '' then concat(c.first_name,' ',c.last_name,' Purchase ',isnull(convert(nvarchar,a.gift_date,110),''))
 		when c.donor_type in ('BIZ','BUSIN1','CO','FN','FOUND2','JO','OR','ORGAN4') then concat(c.last_name,' Purchase ',isnull(convert(nvarchar,a.gift_date,110),''))
 	  end as Name
 from dpgift a
-left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
+--left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
 left join dp c on a.donor_id = c.donor_id
---where a.record_type = 'G'
-where a.record_type = 'G'
-	and a.campaign != ''
-order by a.donor_id;
-
+--inner join #ids d on a.gift_id = d.id
+where 1 = 1
+--	and a.campaign like 'S%'
+ and a.record_type = 'G'
+-- and a.campaign != ''
+order by a.campaign;
 
 -- dump major gifts that are posted
 -- Donor_Perfect_Id__c,Donor_Perfect_Contact_Id__c,Donor_Perfect_Account_Id__c,StageName,CloseDate,Amount,Donor_Perfect_Campaign_Id__c,Description,Name
@@ -156,19 +228,21 @@ select a.gift_id as Donor_Perfect_Id__c
 	  end as StageName
 	, isnull(convert(nvarchar,a.gift_date,110),'') as CloseDate
 	, a.amount as Amount
-	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
+	, isnull(a.campaign,'') as Donor_Perfect_Campaign_Id__c
+--	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
 	, isnull(a.gift_narrative,'') as Description
 	, case
 		when c.donor_type in ('IN','INDIV3') or c.donor_type = '' then concat(c.first_name,' ',c.last_name,' Purchase ',isnull(convert(nvarchar,a.gift_date,110),''))
 		when c.donor_type in ('BIZ','BUSIN1','CO','FN','FOUND2','JO','OR','ORGAN4') then concat(c.last_name,' Purchase ',isnull(convert(nvarchar,a.gift_date,110),''))
 	  end as Name
 from dpgift a
-left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
+--left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
 left join dp c on a.donor_id = c.donor_id
+inner join #ids d on a.gift_id = d.id
 --where a.record_type = 'G'
 where a.record_type = 'M'
 --	and a.campaign != ''
-order by a.donor_id;
+order by a.gift_id;
 
 -- dump gifts that are pledged
 -- Donor_Perfect_Id__c,Donor_Perfect_Contact_Id__c,Donor_Perfect_Account_Id__c,StageName,CloseDate,Amount,Donor_Perfect_Campaign_Id__c,Description,Name
@@ -181,18 +255,20 @@ select a.gift_id as Donor_Perfect_Id__c
 	  end as StageName
 	, isnull(convert(nvarchar,a.gift_date,110),'') as CloseDate
 	, a.amount as Amount
-	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
+	, isnull(a.campaign,'') as Donor_Perfect_Campaign_Id__c
+--	, isnull(b.donor_perfect_id__c,'') as Donor_Perfect_Campaign_Id__c
 	, isnull(a.gift_narrative,'') as Description
 	, case
 		when c.donor_type in ('IN','INDIV3') or c.donor_type = '' then concat(c.first_name,' ',c.last_name,' Pledge ',isnull(convert(nvarchar,a.gift_date,110),''))
 		when c.donor_type in ('BIZ','BUSIN1','CO','FN','FOUND2','JO','OR','ORGAN4') then concat(c.last_name,' Pledge ',isnull(convert(nvarchar,a.gift_date,110),''))
 	  end as Name
 from dpgift a
-left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
+--left join dpcampaigns b on a.campaign = b.donor_perfect_id__c
 left join dp c on a.donor_id = c.donor_id
+inner join #ids d on a.gift_id = d.id
 where a.record_type = 'P'
 --	and a.campaign = ''
-order by a.donor_id;
+order by a.gift_id;
 
 -- gifts with missing campaign
 -- Donor_Perfect_Id__c,Donor_Perfect_Contact_Id__c,Donor_Perfect_Account_Id__c,StageName,CloseDate,Amount,Donor_Perfect_Campaign_Id__c,Description,Name

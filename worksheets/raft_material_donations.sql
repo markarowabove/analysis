@@ -18,6 +18,9 @@ where b.donationId is null;
 
 -- test queries
 select * from materialdonation where description = 'Foamcore';
+select * from nameorg where orgId = 6;
+select * from organizations where id = 6;
+select * from names where id = 55;
 
 -- get contacts id
 select top 25 a.DonationID
@@ -83,6 +86,6 @@ select a.DonationID as Raft_Db2_Id__c
 	, isnull(a.TYEmail,'') as Acknowledgement_Email__c
 	, 'DB2 Import 20180725' as Import_Tag__c
 from MaterialDonation a 
-inner join #ids b on a.donationId = b.Id
+--inner join #ids b on a.donationId = b.Id
 where a.OrgId is not null
 order by a.DonationID;

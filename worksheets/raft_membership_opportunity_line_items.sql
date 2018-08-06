@@ -19,5 +19,5 @@ select a.membershipID as Raft_Db2_Id_
 	, 'DB2 Import 20180725' as Import_Tag__c
 from membership a
 left join lookupMembershipType b on a.MemberType = b.memberTypeID
-inner join #ids c on a.membershipId = c.Id
+--inner join #ids c on a.membershipId = c.Id
 order by a.membershipID;
