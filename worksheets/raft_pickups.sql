@@ -1,9 +1,16 @@
 -- material donation pickups
 use raftdb2den;
 
---update queries
+-- diff - additional records
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.PickupId as Id into #ids from Pickup a
+left join raftdb2den_old.dbo.Pickup b on a.PickupId = b.PickupId
+where b.PickupId is null;
+--select * from #ids order by id;
 
 -- test queries
+select count(*) from pickup;
+
 -- PickupId__c,Raft_Contact_Db2_Id__c,Raft_Activity_Date__c,PickupStreet__c,PickupCity__c,Helper__c,Pallet_Jack__c,Dolly__c,Handtruck__c,Elevator__c,Number_Pallets__c,Number_Barrels__c,Multistory__c,Description,Best_Time__c,Status,Type,Subject,RecordTypeId,WhatId
 select a.PickupId as PickupId__c
 	, a.TYID as Raft_Contact_Db2_Id__c
@@ -81,7 +88,7 @@ select a.PickupId as PickupId__c
 	, '' as WhatId
 from Pickup a
 where a.OrgID = 0
-order by a.PickupId;
+order by a.tyid;
 
 -- org pickups
 -- PickupId__c,Raft_Account_Db2_Id__c,Raft_Activity_Date__c,PickupStreet__c,PickupCity__c,Helper__c,Pallet_Jack__c,Dolly__c,Handtruck__c,Elevator__c,Number_Pallets__c,Number_Barrels__c,Multistory__c,Description,Best_Time__c,Status,Type,Subject,RecordTypeId,WhatId

@@ -1,6 +1,12 @@
 -- workshops
 use raftdb2den;
 
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.Id as Id into #ids from workshops a
+left join raftdb2den_old.dbo.workshops b on a.Id = b.Id
+where b.Id is null;
+--select * from #ids order by id;
+
 select * from workshops order by Id;
 
 select distinct description from terms order by description;
@@ -10,15 +16,15 @@ select distinct description from terms order by description;
 --update terms set description = 'Fall Workshops'
 --update terms set description = 'Winter Workshops'
 --update terms set description = 'Spring Workshops'
---update terms set description = 'Summer Workshops'
+update terms set description = 'Summer Workshops'
 --update terms set description = 'Symposium'
---where 1=1
+where 1=1
 -- and description = 'Fall 2009';
 -- and description like 'February%';
 -- and description like 'January%';
--- and description like 'November%';
--- and description = 'Summer 2009'
--- and description = 'Symposium III';
+--and description like 'November%';
+ and description = 'Summer 2009'
+--and description = 'Symposium III';
 -- and termid = 54;
 
 select * from workshops where UpperGradeRange > 12;
@@ -91,8 +97,10 @@ select a.Id as Raft_Db2_Id__c
 		when a.Cancelled > 1 then 1
 		when a.Cancelled <=1 then 0
 	  end as IsActive
+	, 'DB2 Import 20180725' as Import_Tag__c
 from workshops a
 left join LookupWorkshopTypes b on a.CourseType = b.WSTypeID
 left join Terms c on a.term = c.TermID
+inner join #ids d on a.id = d.id
 where a.Title not like 'CANCELLED:%'
 order by a.Id;

@@ -8,7 +8,7 @@ select * from dpspouses order by donor_id;
 
 -- dump spouses
 -- Import_Id__c,FirstName,LastName,Suffix,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,npe01__Primary_Address_Type__c,Phone,npe01__WorkPhone__c,Fax,MobilePhone,Import_Tag__c
-select top 3 b.donor_id as Import_Id__c
+select b.donor_id as Import_Id__c
 	, b.First as FirstName
 	, b.Last as LastName
 	, b.Suffix as Suffix
@@ -31,7 +31,7 @@ select top 3 b.donor_id as Import_Id__c
 	, isnull(a.business_phone,'') as npe01__WorkPhone__c
 	, isnull(a.fax_phone,'') as Fax
 	, isnull(a.mobile_phone,'') as MobilePhone
-	, 'Spouse Import 20180701' as Import_Tag__c
+	, 'Spouse Import 20180712' as Import_Tag__c
 from dp a 
 inner join dpspouses b on a.donor_id = b.donor_id
 order by a.donor_id;

@@ -4,6 +4,11 @@ use dp;
 -- update queries
 alter table dp alter column donor_id int not null;
 
+if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
+select a.donor_id as Id into #ids from dp a
+left join dp_old.dbo.dp b on a.donor_id = b.donor_id
+where b.donor_id is null;
+--select * from #ids order by id;
 
 select count(*) from dp;
 select count(*) from dpaddress;
@@ -27,9 +32,16 @@ where a.donor_id = 1068;
 
 select * from dp order by donor_id;
 
+-- update created date
+-- Donor_Perfect_Id__c,Donor_Perfect_Created_Date__c
+select a.donor_id as Donor_Perfect_Id__c
+	, isnull(convert(varchar(10),cast(a.created_date as datetime),101),'') as CreatedDate
+from dp a 
+order by a.donor_id;
+
 /********* dp ****************/
 -- dump dp for contacts
--- Donor_Perfect_Id__c,FirstName,LastName,Suffix,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,npe01__Primary_Address_Type__c,Phone,npe01__WorkPhone__c,Fax,MobilePhone,npe01__HomeEmail__c
+-- Donor_Perfect_Id__c,FirstName,LastName,Suffix,Title,MailingStreet,MailingCity,MailingState,MailingPostalCode,MailingCountry,npe01__Primary_Address_Type__c,Phone,npe01__WorkPhone__c,Fax,MobilePhone,npe01__HomeEmail__c,CreatedDate
 select a.donor_id as Donor_Perfect_Id__c
 	, isnull(a.first_name,'') as FirstName
 	, isnull(a.last_name,'') as LastName
@@ -54,10 +66,22 @@ select a.donor_id as Donor_Perfect_Id__c
 	, isnull(a.fax_phone,'') as Fax
 	, isnull(a.mobile_phone,'') as MobilePhone
 	, isnull(a.email,'') as npe01__HomeEmail__c
+	, isnull(convert(nvarchar,a.created_date,126),'') as CreatedDate
+	, isnull(convert(varchar(10),cast(a.created_date as datetime),101),'') as Donor_Perfect_Created_Date__c
+	, 'DP Import 20180725' as Import_Tag__c
 from dp a 
+inner join #ids b on a.donor_id = b.id
 order by a.donor_id;
 
 -- dump dp for accounts
+select a.donor_id as Donor_Perfect_Id__c
+	, a.first_name + ' ' + a.last_name +' Household' as Name
+	, '012f400000192PR' as AccountRecordType 
+	, 'DP Import 20180725' as Import_Tag__c
+from dp a
+inner join #ids b on a.donor_id = b.id
+order by a.donor_id;
+
 -- Donor_Perfect_Id__c,Name,RecordTypeId,npo02__Formal_Greeting__c,npo02__Informal_Greeting__c,AccountId
 select a.donor_id as Donor_Perfect_Id__c
 	,  case
@@ -69,11 +93,7 @@ select a.donor_id as Donor_Perfect_Id__c
 		when a.donor_type in ('BIZ','BUSIN1','CO','FN','FOUND2','JO','OR','ORGAN4') then '012f400000192PS'
 		when a.donor_type = '' then '012f400000192PR'
 	  end as RecordTypeId
-	, b.ENVSAL as npo02__Formal_Greeting__c
-	, b.SHTSAL as npo02__Informal_Greeting__c
 	, '' as AccountId
 from dp a 
-left join dpudf b on a.donor_id = b.donor_id
+inner join #ids b on a.donor_id = b.id
 order by a.donor_type;
-
-
