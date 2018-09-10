@@ -6,8 +6,6 @@ declare @segmentcountmax int
 declare @segmentcount int
 declare @segmentdaycount int
 
-
-
 /*********** DONATION SEGMENTS ***********/
 set @segmentdaycount = 91; -- 365 days / 4 = 91.25
 -- segments

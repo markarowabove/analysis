@@ -12,3 +12,19 @@ from actions
 group by id
 having (count(*) > 1);
 
+/***************** ACTIONS *************/
+if object_id('dbo.source_actions','U') is not null
+	drop table source_actions;
+select id
+	, Contact__c as contactid
+	, Date_of_Action__c as actiondate
+	into source_actions
+from actions
+where 1 = 1
+	and Date_of_Action__c is not null
+	and Contact__c is not null
+order by id; -- 8,683,246
+-- select count(*) from source_actions; -- 8,683,246
+-- select count(*) from actions; -- 8,683,247
+
+
