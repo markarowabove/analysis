@@ -18,7 +18,7 @@ select count(*) from opportunities where npsp__Primary_Contact__c = '';
 select count(*) from opportunities where npsp__Primary_Contact__c! = '';
 --
 select a.npsp__Primary_Contact__c, b.Id, a.Amount from opportunities a
-inner join contacts b on a.npsp__Primary_Contact__c = b.Id
+inner join sources b on a.npsp__Primary_Contact__c = b.Id
 order by a.Id;
 
 select count(*) 
@@ -34,3 +34,18 @@ select StageName, count(*) from opportunities where StageName != '' group by Sta
 -- analyze opp campaigns
 -- 875
 select CampaignId, count(*) from opportunities where CampaignId != '' group by CampaignId order by count(*) desc;
+
+/***************** OPPORTUNITIES *************/
+if object_id('dbo.opportunities_delta','U') is not null
+	drop table opportunities_delta;
+select a.id 
+	, b.id as opportunityid
+	, deltadays = case 
+		when a.joineddate < b.closedate then datediff(day,a.joineddate,b.closedate)
+		else 0
+	end
+	into opportunities_delta
+from sources a
+inner join opportunities b on a.id = b.npsp__Primary_Contact__c
+order by deltadays;
+-- select * from opportunities_delta order by deltadays;
