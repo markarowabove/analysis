@@ -4,8 +4,10 @@ use fww;
 alter table actions alter column Date_of_Action__c date;
 update actions set Date_of_Action__c = null where Date_of_Action__c = '1900-01-01';
 
-select count(*) from actions; -- 8683247
+select count(*) from actions; -- 8,683,247
+select top 100 * from actions order by date_of_action__c;
 select count(*) from actions where Date_of_Action__c is not null; -- 8683246
+select * from actions where contact__c = '0036A00000KCADzQAP' order by date_of_action__c;
 
 -- dupe check
 select id, count(*) as dupes

@@ -33,14 +33,15 @@ if (object_id('tempdb..#segment1') is not null) begin drop table #segment1 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '1' as segment
+	, '1' as recordtype
 into #segment1 
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -50,28 +51,23 @@ where datediff(day,a.joineddate,b.closedate) <= @segmentdaycount;
 -- select * from #segment1 order by channel, type, amount;
 --select * from opportunities where id = '0066A0000058kH4QAI';
 --select * from donors_new where contactid = '0036A00000MsZa8QAF'; -- 2012-12-12
-/***
-declare @segmentdaycount int
-set @segmentdaycount = 91;
-select a.contactid, b.giftdate 
-from #segment1 a
-right join donors_new b on a.contactid = b.contactid
-where datediff(day,b.giftdate,a.closedate) <= @segmentdaycount
-order by b.contactid; -- 245,825
-***/
+
+--declare @segmentdaycount int
+--set @segmentdaycount = 91;
 -- last 91 to 182 days - 3 to 6 months
 if (object_id('tempdb..#segment2') is not null) begin drop table #segment2 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '2' as segment
+	, '1' as recordtype
 into #segment2 
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -91,14 +87,15 @@ if (object_id('tempdb..#segment3') is not null) begin drop table #segment3 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '3' as segment
+	, '1' as recordtype
 into #segment3 
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -117,14 +114,15 @@ if (object_id('tempdb..#segment4') is not null) begin drop table #segment4 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '4' as segment
+	, '1' as recordtype
 into #segment4 
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -144,14 +142,15 @@ if (object_id('tempdb..#segment5') is not null) begin drop table #segment5 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '5' as segment
+	, '1' as recordtype
 into #segment5
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -170,14 +169,15 @@ if (object_id('tempdb..#segment6') is not null) begin drop table #segment6 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '6' as segment
+	, '1' as recordtype
 into #segment6
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -198,14 +198,15 @@ if (object_id('tempdb..#segment7') is not null) begin drop table #segment7 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, b.Amount as amount
-	, b.Id as opportunityId
-	, b.closedate
-	, b.npsp__Primary_Contact__c as contactId
-	, firstgift = case
+--	, b.Id as opportunityId
+--	, b.closedate as recorddate
+	, b.npsp__Primary_Contact__c as contactid
+	, active = case
 		when c.giftdate is not null then 1
 		else 0
 	end
 	, '7' as segment
+	, '1' as recordtype
 into #segment7 
 from sources a
 inner join opportunities b on a.id = b.npsp__Primary_Contact__c
@@ -254,5 +255,5 @@ order by segment, channel, type, amount;
 
 set nocount off
 
-select * from opportunities where npsp__Primary_Contact__c = '0036A00000KBkpVQAT' order by closedate;
-select * from donors_new where contactid = '0036A00000KBkpVQAT';
+--select * from opportunities where npsp__Primary_Contact__c = '0036A00000KBkpVQAT' order by closedate;
+--select * from donors_new where contactid = '0036A00000KBkpVQAT';
