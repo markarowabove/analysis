@@ -2,6 +2,12 @@ use fww;
 
 set nocount on
 
+declare @segmentdaycount int
+declare @startdate date
+
+set @startdate = getdate()
+set @segmentdaycount = 91; -- 365 days / 4 = 91.25
+
 /*********** ACTION SEGMENTS ***********/
 -- segment 1: 0 - 91 days (0 - 3 months)
 -- segment 2: 92 - 183 days (3 - 6 months)
@@ -20,31 +26,26 @@ select dateadd(day,-@segmentdaycount*12,getdate()) as "segment6 - 36 months"
 	, getdate() as today;
 ***/
 
-declare @segmentdaycount int
-set @segmentdaycount = 91; -- 365 days / 4 = 91.25
-
 -- last 0 to 91 days - 3 months
 -- 1,396,639
 if (object_id('tempdb..#actionsegment1') is not null) begin drop table #actionsegment1 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, a.JoinedDate
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '1' as segment
 	, '2' as recordtype
 into #actionsegment1 
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount;
+where datediff(day,a.joineddate,@startdate) <= @segmentdaycount;
 -- select count(*) from #actionsegment1; -- 1,396,639
 -- select top 100 * from #actionsegment1 where contactid = '0036A00000Mt3jLQAR' order by channel, type, amount;
 --select * from opportunities where id = '0066A0000058kH4QAI';
@@ -68,21 +69,20 @@ if (object_id('tempdb..#actionsegment2') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '2' as segment
 	, '2' as recordtype
 into #actionsegment2
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount and datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount*2;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*2;
 -- select top 100 * from #actionsegment2;
 
 --declare @segmentdaycount int;
@@ -92,21 +92,20 @@ if (object_id('tempdb..#actionsegment3') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '3' as segment
 	, '2' as recordtype
 into #actionsegment3
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount*2 and datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount*3;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount*2 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*3;
 -- select top 100 * from #actionsegment3;
 
 --declare @segmentdaycount int;
@@ -116,21 +115,20 @@ if (object_id('tempdb..#actionsegment4') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '4' as segment
 	, '2' as recordtype
 into #actionsegment4
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount*3 and datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount*4;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount*3 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*4;
 -- select top 100 * from #actionsegment4;
 
 --declare @segmentdaycount int;
@@ -140,21 +138,20 @@ if (object_id('tempdb..#actionsegment5') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '5' as segment
 	, '2' as recordtype
 into #actionsegment5
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount*4 and datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount*8;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount*4 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*8;
 -- select top 100 * from #actionsegment5 where contactid = '0036A00000KBa0CQAT' order by actiondate;
 
 --declare @segmentdaycount int;
@@ -164,21 +161,20 @@ if (object_id('tempdb..#actionsegment6') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '6' as segment
 	, '2' as recordtype
 into #actionsegment6
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount*8 and datediff(day,a.joineddate,b.date_of_action__c) <= @segmentdaycount*12;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount*8 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*12;
 -- select top 100 * from #actionsegment6;
 
 --declare @segmentdaycount int;
@@ -188,21 +184,20 @@ if (object_id('tempdb..#actionsegment7') is not null) begin drop table #actionse
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, b.date_of_action__c as recorddate
+	, a.JoinedDate
+	, b.date_of_action__c as recorddate
 	, b.contact__c as contactid
 	, active = case
 		when c.actiondate is not null then 1
 		else 0
 	end
-	, d.segment as cohort
 	, '7' as segment
 	, '2' as recordtype
 into #actionsegment7
 from sources a
 inner join actions b on b.contact__c = a.id
 left join activists_new c on b.id = c.activityid
-left join cohorts d on a.id = d.contactid
-where datediff(day,a.joineddate,b.date_of_action__c) > @segmentdaycount*12;
+where datediff(day,a.joineddate,@startdate) > @segmentdaycount*12;
 -- select top 100 * from #actionsegment7;
 
 -- 8,683,246

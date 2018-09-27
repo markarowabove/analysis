@@ -2,6 +2,12 @@ use fww;
 
 set nocount on
 
+declare @segmentdaycount int
+declare @startdate date
+
+set @startdate = getdate()
+set @segmentdaycount = 91; -- 365 days / 4 = 91.25
+
 /*********** CONTACTS SEGMENTS ***********/
 -- segment 1: 0 - 91 days (0 - 3 months)
 -- segment 2: 92 - 183 days (3 - 6 months)
@@ -22,26 +28,21 @@ select dateadd(day,-@segmentdaycount*12,getdate()) as "segment6 - 36 months"
 	, getdate() as today;
 ***/
 
-declare @segmentdaycount int
-set @segmentdaycount = 91; -- 365 days / 4 = 91.25
-
 -- last 0 to 91 days - 3 months
 if (object_id('tempdb..#contactsegment1') is not null) begin drop table #contactsegment1 end;
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, a.Email_Opt_Out_Date__c as recorddate
---	, a.joineddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '1' as segment
 	, '3' as recordtype
 into #contactsegment1 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount;
+	and datediff(day,a.joineddate,@startdate) <= @segmentdaycount;
 -- select count(*) from #contactsegment1; -- 340,595
 -- select top 100 * from #contactsegment1;
 --select * from #contactsegment1 where channel = 'Distributed Organizing' and type = 'Relay' order by amount, contactid, recorddate, active;
@@ -64,17 +65,16 @@ if (object_id('tempdb..#contactsegment2') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---  , a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '2' as segment
 	, '3' as recordtype
 into #contactsegment2 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount*2;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*2;
 -- select count(*) from #contactsegment2; -- 84,801
 -- select top 100 * from #contactsegment2;
 
@@ -85,17 +85,16 @@ if (object_id('tempdb..#contactsegment3') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---  , a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '3' as segment
 	, '3' as recordtype
 into #contactsegment3 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount*2 and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount*3;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount*2 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*3;
 -- select count(*) from #contactsegment3; -- 51,152
 -- select top 100 * from #contactsegmen3;
 
@@ -106,17 +105,16 @@ if (object_id('tempdb..#contactsegment4') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---  , a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '4' as segment
 	, '3' as recordtype
 into #contactsegment4 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount*3 and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount*4;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount*3 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*4;
 -- select count(*) from #contactsegment4; -- 42,962
 -- select top 100 * from #contactsegmen4;
 
@@ -127,17 +125,16 @@ if (object_id('tempdb..#contactsegment5') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---  , a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '5' as segment
 	, '3' as recordtype
 into #contactsegment5 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount*4 and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount*8;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount*4 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*8;
 -- select count(*) from #contactsegment5; -- 117,507
 -- select top 100 * from #contactsegment5;
 
@@ -148,17 +145,16 @@ if (object_id('tempdb..#contactsegment6') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---  , a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '6' as segment
 	, '3' as recordtype
 into #contactsegment6 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount*8 and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) <= @segmentdaycount*12;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount*8 and datediff(day,a.joineddate,@startdate) <= @segmentdaycount*12;
 -- select count(*) from #contactsegment6; -- 73,902
 -- select top 100 * from #contactsegment6;
 
@@ -169,17 +165,16 @@ if (object_id('tempdb..#contactsegment7') is not null) begin drop table #contact
 select a.Origin_Source_Code_Channel__c as channel
 	, a.Origin_Source_Code_Type__c as type
 	, '' as amount
---	, a.Email_Opt_Out_Date__c as recorddate
+	, a.joineddate
+	, a.Email_Opt_Out_Date__c as recorddate
 	, a.id as contactid
 	, '1' as active
-	, d.segment as cohort
 	, '7' as segment
 	, '3' as recordtype
 into #contactsegment7 
 from sources a
-left join cohorts d on a.id = d.contactid
 where a.Email_Opt_Out_Date__c != ''
-	and datediff(day,a.joineddate,a.Email_Opt_Out_Date__c) > @segmentdaycount*12;
+	and datediff(day,a.joineddate,@startdate) > @segmentdaycount*12;
 -- select count(*) from #contactsegment7; -- 118,214
 -- select top 100 * from #contactsegment7;
 
