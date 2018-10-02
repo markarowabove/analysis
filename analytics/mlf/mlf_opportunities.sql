@@ -62,6 +62,7 @@ update opportunities set name = 'Rolling Hills Church' where id = 3997;
 update opportunities set name = 'National Christian Foundation Houston' where id = 4177;
 update opportunities set name = 'MISSING NAME 4823' where id = 4823;
 update opportunities set name = 'MISSING NAME  4824' where id = 4824;
+update opportunities set name = 'JP''s Peace Love & Happiness Foundation' where name = 'JPs Peace Love & Happiness Foundation';
 ***/
 
 declare @i int
@@ -75,6 +76,7 @@ DECLARE @dest VARCHAR(255)
 DECLARE @lenght INT 
 
 -- select * from opportunities where name = '' order by accountname; -- 23,163
+-- select * from opportunities where name like '%Happiness%';
 set @i = 1
 select @icnt = count(*) from opportunities;
 while (@i <= @icnt) 
@@ -113,6 +115,7 @@ begin
 		END
 
 		set @namekey = rtrim(replace(replace(replace(@dest,' ',''),',',''),'.',''));
+
 		print N' name: ' + @name + ' -- dest: ' + @dest + ' namekey: ' + @namekey; 
 		update opportunities set namekey = @namekey where id = @i;
 
