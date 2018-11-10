@@ -63,6 +63,29 @@ update opportunities set name = 'National Christian Foundation Houston' where id
 update opportunities set name = 'MISSING NAME 4823' where id = 4823;
 update opportunities set name = 'MISSING NAME  4824' where id = 4824;
 update opportunities set name = 'JP''s Peace Love & Happiness Foundation' where name = 'JPs Peace Love & Happiness Foundation';
+
+
+update opportunities set name = 'Alexander, Margo' where name = 'Alexander, Margo (2)';
+update opportunities set name = 'Batlan, Robert D. and Mary Lou' where id = 164;
+update opportunities set name = 'Brown, Jan' where name = 'Brown, Jan (2)';
+update opportunities set name = 'Chapman Jr, J Winston & Patricia R' where name = 'Chapman Jr, J Winston (Winn) & Patricia R';
+update opportunities set name = 'Graham, Taylor' where name = 'Graham, Taylor (donor)';
+update opportunities set name = 'HEB' where name = 'HEB (Donor)';
+update opportunities set name = 'Klasson, Eric' where name = 'Klasson, Eric (donor)';
+update opportunities set name = 'Lutz, Amy' where name = 'Lutz, Amy (was Mooney)';
+update opportunities set name = 'McConkey, Suzanne and Robert' where name = 'McConkey, Suzanne and Robert - CF Tenant';
+update opportunities set name = 'McDonald, Mary Ross & James R' where name = 'McDonald, Mary Ross & James R (Bob&Polly)';
+update opportunities set name = 'Miller, Nancy & Edward' where name = 'iller, Nancy & Edward - CF Tenant';
+update opportunities set name = 'Reynolds, Robert & Carol' where name = 'Reynolds, Robert (Rob) & Carol';
+update opportunities set name = 'Smith, Rachel' where name = 'Smith, Rachel (2)';
+update opportunities set name = 'YourCause, LLC-PwC' where name = 'YourCause, LLC-PwC (Pricewaterhouse)';
+update opportunities set name = 'Batlan, Robert D. and Mary Lou' where name = 'Batlan, Robert D. ("Bob") and Mary Lou';
+update opportunities set name = 'First Baptist Church Hamilton' where name = 'First Baptist Church (Hamilton)';
+update opportunities set name = 'Rowalt, Jim and Beverly B' where name = 'Rowalt, Jim (Ralph) and Beverly B';
+insert into opportunities
+	select Id, Type, Date, Source, Num, Name, Memo, Class, Split, Debit, Credit, Balance, LastName, namekey
+	from mlf_opportunities_jul_sep_18;
+select Id, Name, namekey from opportunities where id > 5259 and namekey like '%(%' order by Id;
 ***/
 
 declare @i int
@@ -73,7 +96,7 @@ declare @namekey nvarchar(255)
 declare @commaindex int
 DECLARE @source VARCHAR(255)
 DECLARE @dest VARCHAR(255)
-DECLARE @lenght INT 
+DECLARE @length INT 
 
 -- select * from opportunities where name = '' order by accountname; -- 23,163
 -- select * from opportunities where name like '%Happiness%';

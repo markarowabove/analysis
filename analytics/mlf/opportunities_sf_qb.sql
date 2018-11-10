@@ -13,17 +13,15 @@ declare @qboppname nvarchar(255)
 declare @qbopptype nvarchar(255)
 declare @accountid nvarchar(18)
 
---select count(*) from opportunities; -- 5259
---select * from sf_opportunities where name like '%Lubbers%'; -- 116,329
---select * from opportunities where name like '%Corroa%'
---select count(*) from sf_accounts where name like 'Corroa%';
---select count(*) from sf_accounts where name like '%Corroa Jr.%'
--- select count(*) from opportunities_sf_qb;
-
+--select count(*) from opportunities; --7751
+--select count(*) from sf_opportunities where closedate >= '2018-01-01' and closedate < '2018-10-01'; --10,296
+--select count(*) from opportunities_sf_qb;
+--select * from sf_accounts;
+--select * from opportunities_sf where SFName like '%Truck%'
 
 -- create a temp table of unique SF account names
 if (object_id('tempdb..#sfaccountnames') is not null) begin drop table #sfaccountnames end;
-select distinct name into #sfaccountnames from sf_accounts ;
+select distinct name into #sfaccountnames from sf_accounts;
 
 -- find opportunities shared by QB and SF
 /***************** OPPORTUNITIES *************/
@@ -42,6 +40,8 @@ create table opportunities_sf_qb (
 	, SFAmount float not null
 	, SFCheckNumber nvarchar(100)
 	, SFClassyNumber nvarchar(100)
+	, SFClassyAnonymous int
+	, SFCampaignId nvarchar(18)
 );
 
 set @m = 1;
@@ -69,7 +69,7 @@ begin
 		if @accountcnt > 0
 		begin
 			
-			insert into opportunities_sf_qb (QBID, QBDate, QBCredit, QBName, QBType, SFCloseDate, SFOppId, SFName, SFAmount, SFCheckNumber, SFClassyNumber)
+			insert into opportunities_sf_qb (QBID, QBDate, QBCredit, QBName, QBType, SFCloseDate, SFOppId, SFName, SFAmount, SFCheckNumber, SFClassyNumber, SFClassyAnonymous, SFCampaignId)
 			select a.Id as QBID
 				, a.Date as QBDate
 				, a.Credit as QBCredit
@@ -81,20 +81,21 @@ begin
 				, b.SFAmount
 				, b.SFCheckNumber
 				, b.SFClassyNumber
+				, b.SFClassyAnonymous 
+				, b.SFCampaignId
 			from opportunities a
 			inner join opportunities_sf b on a.Date = b.SFCloseDate
 			where a.Id = @m
 				and b.SFName like'%' + @qboppname + '%'
 				--and a.Credit = b.Amount
-			--select QBID, QBDate, QBCredit, QBName, SFCloseDate, SFOppId, SFName, SFAmount from #opps;
 
-		--end
+		end
 
-	end
+	--end
 
 	set @m = @m + 1
 end
 
 set nocount off
 
-select * from opportunities_sf_qb order by qbdate; 
+--select * from opportunities_sf_qb order by qbdate; 

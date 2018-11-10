@@ -8,6 +8,8 @@ declare @sfclosedate date
 declare @sfname nvarchar(255)
 declare @sfchecknumber nvarchar(100)
 declare @sfclassynumber nvarchar(100)
+declare @sfclassyanonymous int
+declare @sfcampaignid nvarchar(18)
 
 --select count(*) from opportunities; -- 5259
 --select * from sf_opportunities where name like '%Lubbers%'; -- 116,329
@@ -39,6 +41,8 @@ create table opportunities_sf (
 	, SFAmount float not null
 	, SFCheckNumber nvarchar(100)
 	, SFClassyNumber nvarchar(100)
+	, SFClassyAnonymous int
+	, SFCampaignId nvarchar(18)
 	, found int
 );
 
@@ -54,11 +58,14 @@ select id as SFOppId
 	, amount as SFAmount 
 	, stayclassy__check_number__c as SFCheckNumber
 	, stayclassy__sc_order_id__c as SFClassyNumber
+	, stayclassy__Anonymous_Donor__c as SFClassyAnonymous
+	, CampaignId as SFCampaignId
 from sf_opportunities 
 where stagename = 'Received' 
-	and closedate >= '2018-01-01';
+	and closedate >= '2018-01-01'
+	and closedate < '2018-10-01';
 OPEN db_cursor
-FETCH NEXT FROM db_cursor INTO @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber
+FETCH NEXT FROM db_cursor INTO @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber, @sfclassyanonymous, @sfcampaignid
 
 declare @found int = 0
 declare @rownum int = 0
@@ -79,13 +86,15 @@ BEGIN
 	set @found = 0;
 	print N' SF Name: ' + @sfname + ' SF Opportunity Id: ' + @sfoppid + ' SF Amount: ' + cast(@sfamount as nvarchar(10)) + ' SF Close Date: ' + cast(@sfclosedate as nvarchar(10));
 	set @found = (select count(*) from #qbnames where @sfname like '%' + lastname + '%');
-	insert into opportunities_sf (sfoppid, sfclosedate, sfname, sfamount, sfchecknumber, sfclassynumber, found)
-		select @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber, @found;
+	insert into opportunities_sf (sfoppid, sfclosedate, sfname, sfamount, sfchecknumber, sfclassynumber, sfclassyanonymous, sfcampaignid, found)
+		select @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber, @sfclassyanonymous, @sfcampaignid, @found;
 
-	FETCH NEXT FROM db_cursor INTO @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber
+	FETCH NEXT FROM db_cursor INTO @sfoppid, @sfclosedate, @sfname, @sfamount, @sfchecknumber, @sfclassynumber, @sfclassyanonymous, @sfcampaignid
 	set @rownum = @rownum + 1
 
 END
 CLOSE db_cursor
 DEALLOCATE db_cursor
 set nocount off
+
+--select * from opportunities_sf order by found desc;
