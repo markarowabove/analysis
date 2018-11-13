@@ -1,6 +1,6 @@
 use mlf;
 
-select * from qb_namekeys;
+select * from qb_namekeys where qbkeyname1 like '%DonaldDavis%';
 
 select * from qb_namekeys where qbkeyname1 like '% %';
 update a 
