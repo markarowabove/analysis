@@ -1,11 +1,21 @@
 use mlf;
 
+--select class from opportunities where class like '%:%' order by class;
+--select class, fund from opportunities order by class;
+/*** count duplicates -- its ok to have dupes
+select fund, count(*)
+from opportunities
+group by fund
+order by count(*);
+**/
+
 -- update queries
 /****
 alter table opportunities alter column id int not null;
 alter table opportunities add constraint pk_opportunities primary key(id);
 alter table opportunities alter column Date date not null;
 alter table opportunities add namekey nvarchar(255);
+alter table opportunities add fund nvarchar(255);
 
 select Debit from opportunities order by Debit;
 update opportunities set Debit = 0 where Debit = '';
@@ -92,6 +102,8 @@ declare @i int
 declare @icnt int
 declare @lastname nvarchar(255)
 declare @name nvarchar(255)
+declare @fund nvarchar(255)
+declare @class nvarchar(255)
 declare @namekey nvarchar(255)
 declare @commaindex int
 DECLARE @source VARCHAR(255)
@@ -109,6 +121,8 @@ begin
 	set @namekey = '';
 	set @name = '';
 	set @name = (select name from opportunities where id = @i);
+	set @class = (select class from opportunities where id = @i);
+	set @fund = (select substring(class, len(class) - charindex(':',reverse(class)) + 2,len(class)) from opportunities where id  = @i);
 	--set @lastname = (select left(name,charindex(',',name,1)-1) from opportunities where id = @i);
 	--set @lastname = (select SUBSTRING(@lastname, 1 ,
 		--case when  CHARINDEX(' ', @lastname ) = 0 then LEN(@lastname) 
@@ -139,8 +153,9 @@ begin
 
 		set @namekey = rtrim(replace(replace(replace(@dest,' ',''),',',''),'.',''));
 
-		print N' name: ' + @name + ' -- dest: ' + @dest + ' namekey: ' + @namekey; 
-		update opportunities set namekey = @namekey where id = @i;
+		print N' name: ' + @name + ' -- dest: ' + @dest + ' namekey: ' + @namekey + ' class: ' + @class + ' fund: ' + @fund; 
+		update opportunities set namekey = @namekey, fund = @fund where id = @i;
+	
 
 	--end
 	--else

@@ -26,6 +26,7 @@ select b.id
 	, b.debit
 	, b.date
 	, b.type
+	, b.fund
 from opportunities b
 --where b.type in ('Sales Receipt','General Journal')
 order by b.namekey
@@ -120,6 +121,7 @@ select a.id as SFID
 	, b.credit as QBCredit
 	, b.date as QBDate
 	, b.type as QBType
+	, b.fund as QBFund
 into #qbsf0
 from sf_opportunities a
 inner join opportunities b on a.namekey = b.namekey
@@ -147,6 +149,7 @@ select a.id as SFID
 	, b.credit as QBCredit
 	, b.date as QBDate
 	, b.type as QBType
+	, b.fund as QBFund
 into #qbsf1
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname1
@@ -173,6 +176,7 @@ select a.id as SFID
 	, b.credit as QBCredit
 	, b.date as QBDate
 	, b.type as QBType
+	, b.fund as QBFund
 into #qbsf2
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname2
@@ -199,6 +203,7 @@ select a.id as SFID
 	, b.credit as QBCredit
 	, b.date as QBDate
 	, b.type as QBType
+	, b.fund as QBFund
 into #qbsf3
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname3
@@ -225,6 +230,7 @@ select a.id as SFID
 	, b.credit as QBCredit
 	, b.date as QBDate
 	, b.type as QBType
+	, b.fund as QBFund
 into #qbsf4
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname4
@@ -267,8 +273,6 @@ having (count(*) > 1);
 ****/
 
 -- get Sf Oppportunities not in QB
-
-
 -- 5659
 --select count(*) from sf_opportunities;--10309
 --select count(*) from #qbsf;            --3728
@@ -301,6 +305,7 @@ select a.id
 	, a.credit
 	, a.date
 	, a.type
+	, a.fund
 from opportunities a
 left join #qbsf b on a.id = b.qbid
 where 1 = 1
