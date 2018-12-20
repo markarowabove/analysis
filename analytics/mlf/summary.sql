@@ -11,6 +11,7 @@ set nocount on
 -- QB Opportunities not in SF -- 2,326
 -- select * from opportunities order by date, name, credit;
 -- select * from sf_opportunities where namekey like '%AGlimmerofHopeFoundation%';
+-- select * from sf_opportunities where id = '0061Y00000mOSMfQAO';
 --select type, count(*)
 --from opportunities 
 --group by type
@@ -44,8 +45,7 @@ select a.id
 from sf_opportunities a
 where a.closedate >= '2018-01-01'
 	and a.closedate < '2018-10-01'
-order by a.namekey
-	, a.closedate;
+order by a.closedate;
 
 /****
 -- namekey temp table
@@ -122,9 +122,11 @@ select a.id as SFID
 	, b.date as QBDate
 	, b.type as QBType
 	, b.fund as QBFund
+	, c.Id as SFFundId
 into #qbsf0
 from sf_opportunities a
 inner join opportunities b on a.namekey = b.namekey
+inner join sf_funds c on b.fund = c.name
 where 1 = 1
 	and a.closedate = b.date
 	and a.closedate >= '2018-01-01'
@@ -132,7 +134,8 @@ where 1 = 1
 	and a.amount = floor(b.credit)
 order by a.closedate;
 -- display records
---select * from #qbsf order by SFCloseDate;
+--select * from #qbsf0 where sfnamekey = 'CharlesHunter' order by SFCloseDate;
+--select * from #qbsf0 where sfid = '0061Y00000mOXoBQAW';
 
 if (object_id('tempdb..#qbsf1') is not null) begin drop table #qbsf1 end;
 select a.id as SFID
@@ -150,16 +153,24 @@ select a.id as SFID
 	, b.date as QBDate
 	, b.type as QBType
 	, b.fund as QBFund
+	, d.Id as SFFundId
 into #qbsf1
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname1
 inner join opportunities b on c.qbid = b.id
+inner join sf_funds d on b.fund = d.name
 where 1 = 1
 	and a.closedate = b.date
 	and a.closedate >= '2018-01-01'
 	and a.closedate < '2018-10-01'
 	and a.amount = floor(b.credit)
 order by a.closedate;
+--select * from #qbsf1 where sfnamekey = 'CharlesHunter' order by SFCloseDate;
+--select * from sf_opportunities where id = '0061Y00000mOXoBQAW';
+--select * from qb_namekeys where qbkeyname1 like '%ConniesCarwashNewMiniStorage%'
+--select * from qb_namekeys where qbkeyname2 like '%ConniesCarwashNewMiniStorage%'
+--select * from qb_namekeys where qbkeyname3 like '%ConniesCarwashNewMiniStorage%'
+--select * from qb_namekeys where qbkeyname4 like '%ConniesCarwashNewMiniStorage%'
 
 if (object_id('tempdb..#qbsf2') is not null) begin drop table #qbsf2 end;
 select a.id as SFID
@@ -177,16 +188,20 @@ select a.id as SFID
 	, b.date as QBDate
 	, b.type as QBType
 	, b.fund as QBFund
+	, d.Id as SFFundId
 into #qbsf2
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname2
 inner join opportunities b on c.qbid = b.id
+inner join sf_funds d on b.fund = d.name
 where 1 = 1
 	and a.closedate = b.date
 	and a.closedate >= '2018-01-01'
 	and a.closedate < '2018-10-01'
 	and a.amount = floor(b.credit)
 order by a.closedate;
+--select * from #qbsf2 where sfnamekey = 'CharlesHunter' order by SFCloseDate;
+--select * from #qbsf2 where sfid = '0061Y00000mOXoBQAW';
 
 if (object_id('tempdb..#qbsf3') is not null) begin drop table #qbsf3 end;
 select a.id as SFID
@@ -204,16 +219,20 @@ select a.id as SFID
 	, b.date as QBDate
 	, b.type as QBType
 	, b.fund as QBFund
+	, d.Id as SFFundId
 into #qbsf3
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname3
 inner join opportunities b on c.qbid = b.id
+inner join sf_funds d on b.fund = d.name
 where 1 = 1
 	and a.closedate = b.date
 	and a.closedate >= '2018-01-01'
 	and a.closedate < '2018-10-01'
 	and a.amount = floor(b.credit)
 order by a.closedate;
+--select * from #qbsf3 where sfnamekey = 'CharlesHunter' order by SFCloseDate;
+--select * from #qbsf3 where sfid = '0061Y00000mOXoBQAW';
 
 if (object_id('tempdb..#qbsf4') is not null) begin drop table #qbsf4 end;
 select a.id as SFID
@@ -231,16 +250,20 @@ select a.id as SFID
 	, b.date as QBDate
 	, b.type as QBType
 	, b.fund as QBFund
+	, d.Id as SFFundId
 into #qbsf4
 from sf_opportunities a
 inner join qb_namekeys c on a.namekey = c.qbkeyname4
 inner join opportunities b on c.qbid = b.id
+inner join sf_funds d on b.fund = d.name
 where 1 = 1
 	and a.closedate = b.date
 	and a.closedate >= '2018-01-01'
 	and a.closedate < '2018-10-01'
 	and a.amount = floor(b.credit)
 order by a.closedate;
+--select * from #qbsf4 where sfnamekey = 'CharlesHunter' order by SFCloseDate;
+--select * from #qbsf4 where sfid = '0061Y00000mOXoBQAW';
 
 if (object_id('tempdb..#qbsf') is not null) begin drop table #qbsf end;
 select * into #qbsf from (
@@ -254,7 +277,7 @@ select * into #qbsf from (
 	union
 	select * from #qbsf4
 ) u;
---select * from #qbsf order by sfnamekey; -- 4942
+--select * from #qbsf order by sfclosedate; -- 4942
 
 -- test queries
 -- select * from #qbsf where sfid = '0061Y00000l2fjdQAA';
@@ -264,6 +287,18 @@ select * into #qbsf from (
 -- select * from opportunities where name like '%Waylon%';
 -- select * from opportunities where namekey = 'BarryRouch' order by date;
 -- select * from sf_opportunities where namekey = 'BarryRouch';
+/**
+--1490
+select a.* 
+from mlf_donations_reconciled a
+left join #qbsf b on a.sfid = b.sfid
+where b.sfid is null
+order by a.date;
+select * from sf_opportunities where id = '0061Y00000mOXoBQAW';
+select * from mlf_donations_reconciled where sfid = '0061Y00000mOXoBQAW';
+select * from #qbsf where sfid = '0061Y00000mOXoBQAW';
+**/
+
 -- check for dupes
 /****
 select SFID, count(*) as count
@@ -295,7 +330,7 @@ where 1 = 1
 	and a.id not in (select SFID from #qbsf)
 	and b.sfid is null
 order by a.namekey;
---select * from #sfnotqb1 order by closedate;
+--select * from #sfnotqb1 order by namekey;
 
 -- get QB Opportunities not in SF
 -- 4115
@@ -306,8 +341,10 @@ select a.id
 	, a.date
 	, a.type
 	, a.fund
+	, c.Id
 from opportunities a
 left join #qbsf b on a.id = b.qbid
+inner join sf_funds c on a.fund = c.name
 where 1 = 1
 	and a.date >= '2018-01-01'
 	and a.date < '2018-10-01'

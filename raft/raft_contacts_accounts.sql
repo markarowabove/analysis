@@ -2,6 +2,8 @@ use raftdb2den;
 
 select count(*) from names;
 
+select * from names where last = 'Buznedo';
+
 -- diff - additional records
 if (object_id('tempdb..#ids') is not null) begin drop table #ids end;
 select a.id into #ids from names a
